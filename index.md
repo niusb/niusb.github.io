@@ -1,37 +1,45 @@
-## Welcome to GitHub Pages
+博客首页
+本项目主要是用来做个人的博客使用，用与个人知识积累和分享。
 
-You can use the [editor on GitHub](https://github.com/niusb/niusb.github.io/edit/main/index.md) to maintain and preview the content for your website in Markdown files.
+我是21届的毕业生，主要从事JavaWeb后端的工作，有可能以后会做大数据方向。
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+如果有任何问题可以联系我，我的邮箱是：2287360627@qq.com
 
-### Markdown
+Java
+java8新特性
+数据库
+关系型数据库
+非关系型数据库
+redis介绍
+redis命令
+redis常见异常和解决方案
+Linux
+常用命令
+常用工具配置
+问题记录
+大数据
+hadoop介绍
+hadoop入门
+MapReduce介绍
+HBase介绍
+HBase数据操作
+Yarn介绍
+Zookeeper介绍
+Zookeeper入门
+Sqoop介绍
+Hive介绍
+Flume介绍
+KafKa介绍
+Pig介绍
+Ambari介绍
+其他组件
+前端
+本人主要开发后端，前端用于记录工作时遇到的小tips
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+js
+面经
+TODO
 
-```markdown
-Syntax highlighted code block
-
-# Header 1
-## Header 2
-### Header 3
-
-- Bulleted
-- List
-
-1. Numbered
-2. List
-
-**Bold** and _Italic_ and `Code` text
-
-[Link](url) and ![Image](src)
-```
-
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
-
-### Jekyll Themes
-
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/niusb/niusb.github.io/settings/pages). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
-
-### Support or Contact
-
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://support.github.com/contact) and we’ll help you sort it out.
+其他
+git
+markdown
