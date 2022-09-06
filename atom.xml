@@ -1,20 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
-  <title>蜗小牛的博客</title>
+  <title>根号三</title>
   
-  <subtitle>蜗小牛的博客</subtitle>
+  <subtitle>Continue coding</subtitle>
   <link href="http://example.com/atom.xml" rel="self"/>
   
   <link href="http://example.com/"/>
-  <updated>2022-09-05T06:51:36.841Z</updated>
+  <updated>2022-09-06T07:38:14.068Z</updated>
   <id>http://example.com/</id>
   
   <author>
-    <name>蜗小牛</name>
+    <name>根号三</name>
     
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>序</title>
+    <link href="http://example.com/2022/09/06/%E5%BA%8F/"/>
+    <id>http://example.com/2022/09/06/%E5%BA%8F/</id>
+    <published>2022-09-06T07:20:31.000Z</published>
+    <updated>2022-09-06T07:38:14.068Z</updated>
+    
+    <content type="html"><![CDATA[<p>这里是根号三的个人博客</p>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;这里是根号三的个人博客&lt;/p&gt;
+</summary>
+      
+    
+    
+    
+    
+  </entry>
   
   <entry>
     <title>单点登陆(Single Sign On)</title>
