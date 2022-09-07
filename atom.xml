@@ -6,7 +6,7 @@
   <link href="http://example.com/atom.xml" rel="self"/>
   
   <link href="http://example.com/"/>
-  <updated>2022-09-06T08:24:37.862Z</updated>
+  <updated>2022-09-06T09:10:53.705Z</updated>
   <id>http://example.com/</id>
   
   <author>
@@ -21,14 +21,14 @@
     <link href="http://example.com/2022/09/06/%E5%BA%8F/"/>
     <id>http://example.com/2022/09/06/%E5%BA%8F/</id>
     <published>2022-09-06T07:20:31.000Z</published>
-    <updated>2022-09-06T08:24:37.862Z</updated>
+    <updated>2022-09-06T09:10:53.705Z</updated>
     
-    <content type="html"><![CDATA[<p>这里是蜗小牛的个人博客</p>]]></content>
+    <content type="html"><![CDATA[<p>你好.我是蜗小牛.</p>]]></content>
     
     
       
       
-    <summary type="html">&lt;p&gt;这里是蜗小牛的个人博客&lt;/p&gt;
+    <summary type="html">&lt;p&gt;你好.我是蜗小牛.&lt;/p&gt;
 </summary>
       
     
