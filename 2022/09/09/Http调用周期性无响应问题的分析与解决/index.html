@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha256-AbA177XfpSnFEvgpYu1jMygiLabzPCJCRIBtR5jGc0k=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.13.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="一. 问题背景项目中， 需要把第三方的服务 通过微服务网关进行发布。 在测试过程中，发现了每过一段时间，通过网关调用下游服务时，会返回 HttpCode 500的异常， 再次调用该服务就返回正常了。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Http调用周期性无响应问题的分析与解决">
+<meta property="og:url" content="http://example.com/2022/09/09/Http%E8%B0%83%E7%94%A8%E5%91%A8%E6%9C%9F%E6%80%A7%E6%97%A0%E5%93%8D%E5%BA%94%E9%97%AE%E9%A2%98%E7%9A%84%E5%88%86%E6%9E%90%E4%B8%8E%E8%A7%A3%E5%86%B3/index.html">
+<meta property="og:site_name" content="蜗小牛">
+<meta property="og:description" content="一. 问题背景项目中， 需要把第三方的服务 通过微服务网关进行发布。 在测试过程中，发现了每过一段时间，通过网关调用下游服务时，会返回 HttpCode 500的异常， 再次调用该服务就返回正常了。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://rgwngkfs9.hn-bkt.clouddn.com/f46e30a4-26a8-42ca-b23e-c0700768d614.png">
+<meta property="og:image" content="http://rgwngkfs9.hn-bkt.clouddn.com/cd473ab5-5510-4f02-9032-28a2bea274e4.png">
+<meta property="og:image" content="http://rgwngkfs9.hn-bkt.clouddn.com/fc98ead5-19de-4e10-a87b-5e10974a64d7.png">
+<meta property="og:image" content="http://rgwngkfs9.hn-bkt.clouddn.com/0ea2683d-73d9-4212-b395-ce8d5965948e.png">
+<meta property="og:image" content="http://rgwngkfs9.hn-bkt.clouddn.com/72a8f298-dff2-44c5-a2d0-dfef732e9dd5.png">
+<meta property="og:image" content="http://rgwngkfs9.hn-bkt.clouddn.com/08488882-e73f-4454-9c12-06bac27a0432.png">
+<meta property="og:image" content="http://rgwngkfs9.hn-bkt.clouddn.com/70fd65b7-3c45-4aa4-a813-e1a53677b8c5.png">
+<meta property="og:image" content="http://rgwngkfs9.hn-bkt.clouddn.com/78ae1f23-7c8a-45d1-be76-7512da2aebca.png">
+<meta property="og:image" content="http://rgwngkfs9.hn-bkt.clouddn.com/ad1e6da1-c67a-408f-a0a6-a7c789bee370.png">
+<meta property="article:published_time" content="2022-09-09T07:55:25.000Z">
+<meta property="article:modified_time" content="2022-09-09T08:25:30.835Z">
+<meta property="article:author" content="蜗小牛">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://rgwngkfs9.hn-bkt.clouddn.com/f46e30a4-26a8-42ca-b23e-c0700768d614.png">
+
+
+<link rel="canonical" href="http://example.com/2022/09/09/Http%E8%B0%83%E7%94%A8%E5%91%A8%E6%9C%9F%E6%80%A7%E6%97%A0%E5%93%8D%E5%BA%94%E9%97%AE%E9%A2%98%E7%9A%84%E5%88%86%E6%9E%90%E4%B8%8E%E8%A7%A3%E5%86%B3/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2022/09/09/Http%E8%B0%83%E7%94%A8%E5%91%A8%E6%9C%9F%E6%80%A7%E6%97%A0%E5%93%8D%E5%BA%94%E9%97%AE%E9%A2%98%E7%9A%84%E5%88%86%E6%9E%90%E4%B8%8E%E8%A7%A3%E5%86%B3/","path":"2022/09/09/Http调用周期性无响应问题的分析与解决/","title":"Http调用周期性无响应问题的分析与解决"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Http调用周期性无响应问题的分析与解决 | 蜗小牛</title>
+  
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="蜗小牛" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">蜗小牛</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Continue coding</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%80-%E9%97%AE%E9%A2%98%E8%83%8C%E6%99%AF"><span class="nav-number">1.</span> <span class="nav-text">一. 问题背景</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%8C-%E9%97%AE%E9%A2%98%E5%AE%9A%E4%BD%8D"><span class="nav-number">2.</span> <span class="nav-text">二. 问题定位</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-%E6%AD%A3%E5%B8%B8%E6%9C%8D%E5%8A%A1%E7%BD%91%E7%BB%9C%E5%8C%851"><span class="nav-number">2.1.</span> <span class="nav-text">(1) 正常服务网络包1 :</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-%E6%AD%A3%E5%B8%B8%E6%9C%8D%E5%8A%A1%E7%BD%91%E7%BB%9C%E5%8C%852"><span class="nav-number">2.2.</span> <span class="nav-text">(2) 正常服务网络包2 :</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-%E7%AC%AC%E4%B8%80%E6%AC%A1%E8%B0%83%E7%94%A8%E5%BC%82%E5%B8%B8%E7%9A%84%E7%BD%91%E7%BB%9C%E5%8C%85"><span class="nav-number">2.3.</span> <span class="nav-text">(3) 第一次调用异常的网络包 :</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%89-%E9%97%AE%E9%A2%98%E8%A7%A3%E5%86%B3"><span class="nav-number">3.</span> <span class="nav-text">三. 问题解决</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">蜗小牛</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">3</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+  </nav>
+</div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/09/09/Http%E8%B0%83%E7%94%A8%E5%91%A8%E6%9C%9F%E6%80%A7%E6%97%A0%E5%93%8D%E5%BA%94%E9%97%AE%E9%A2%98%E7%9A%84%E5%88%86%E6%9E%90%E4%B8%8E%E8%A7%A3%E5%86%B3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="蜗小牛">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="蜗小牛">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Http调用周期性无响应问题的分析与解决 | 蜗小牛">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Http调用周期性无响应问题的分析与解决
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2022-09-09 15:55:25 / 修改时间：16:25:30" itemprop="dateCreated datePublished" datetime="2022-09-09T15:55:25+08:00">2022-09-09</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h4 id="一-问题背景"><a href="#一-问题背景" class="headerlink" title="一. 问题背景"></a><strong>一. 问题背景</strong></h4><p>项目中， 需要把第三方的服务 通过微服务网关进行发布。 在测试过程中，发现了每过一段时间，通过网关调用下游服务时，会返回 HttpCode 500的异常， 再次调用该服务就返回正常了。 </p>
+<span id="more"></span>
+
+<p><img src="http://rgwngkfs9.hn-bkt.clouddn.com/f46e30a4-26a8-42ca-b23e-c0700768d614.png" alt="img"></p>
+<h4 id="二-问题定位"><a href="#二-问题定位" class="headerlink" title="二. 问题定位"></a><strong>二. 问题定位</strong></h4><p>\1. 网关日志分析，通过测试人员描述，初步判断是调用下游三方服务超时了，在日志中抓到异常日志如下：</p>
+<p><img src="http://rgwngkfs9.hn-bkt.clouddn.com/cd473ab5-5510-4f02-9032-28a2bea274e4.png" alt="img"></p>
+<p>通过日志可以看到，网关在调用第三方服务时， 出现了 Socket ReadTimedout 的异常，判断可能是 网关调用下游服务的超时时间 10s 太短了， 下游服务在第一次被调用时，可能要加载一些数据，超过了10s，所以第一次调用报错， 而后续的调用是正常的。</p>
+<p>\2. 调整服务调用超时时间，从10s 调整到 60s，但是在30分钟以后，第一次调用依然会出现 Socket ReadTimedout 的异常。 在调整到 180s， 第一次调用依然会出现 Socket ReadTimedout 异常。因此怀疑并不是简单的超时时间问题。 重新调整了怀疑方向。</p>
+<p>\3. 部署我们自己的模拟应用进行测试，多次测试并不会出现 Socket ReadTimedout 异常。 因此怀疑可能是 网关到 第三方的网络存在问题。</p>
+<p>\4. 协调网运同事进行排查， 网络没有问题。 同时排查了主机的 ulimit(openfile) 与 ipv4(tcp_timestamps、tcp_tw_recycle) 配置。 调整主机 ulimit openfile 参数后，第一次超时仍未解决。</p>
+<p>\5. 因为现象是第一次调用服务失败，后续调用服务正常， 因此通过Postman的 Code功能 对比2次调用的 HttpHeader 等信息， 第一次调用和后续多次调用都是完全一致的。 </p>
+<p><img src="http://rgwngkfs9.hn-bkt.clouddn.com/fc98ead5-19de-4e10-a87b-5e10974a64d7.png" alt="img"></p>
+<p>\6. 常规排查问题的手段基本都使用了，还是无法判断问题原因。 因此只能通过网络抓包来分析TCP的交互流程，在更底层的4层网络来分析排查问题。</p>
+<ul>
+<li>Linux 抓包工具使用 Tcpdump.</li>
+<li>网络包分析工具使用 Wireshark。</li>
+</ul>
+<h5 id="1-正常服务网络包1"><a href="#1-正常服务网络包1" class="headerlink" title="(1) 正常服务网络包1 :"></a><strong>(1) 正常服务网络包1 :</strong></h5><p>​    <em>网关ip地址： 192.168.147.6<br>​    三方服务ip地址: 172.22.136.123</em></p>
+<p><img src="http://rgwngkfs9.hn-bkt.clouddn.com/0ea2683d-73d9-4212-b395-ce8d5965948e.png" alt="img"></p>
+<h5 id="2-正常服务网络包2"><a href="#2-正常服务网络包2" class="headerlink" title="(2) 正常服务网络包2 :"></a><strong>(2) 正常服务网络包2 :</strong></h5><p>还有一种正常调用的情况是： 没有TCP的3次握手过程，网关直接发送 TCP 封包到下游服务，这样的流程是由于 Http 设置了 keep-alive 参数， 因此客户端和服务端会维持一个 TCP的长链接，这样就不用每次都建立 TCP连接。 关于 keep-alive 参数说明参考: <a target="_blank" rel="noopener" href="https://blog.csdn.net/xiaoduanayu/article/details/78386508">https://blog.csdn.net/xiaoduanayu/article/details/78386508</a></p>
+<p><img src="http://rgwngkfs9.hn-bkt.clouddn.com/72a8f298-dff2-44c5-a2d0-dfef732e9dd5.png" alt="img"></p>
+<p><img src="http://rgwngkfs9.hn-bkt.clouddn.com/08488882-e73f-4454-9c12-06bac27a0432.png" alt="img"></p>
+<h5 id="3-第一次调用异常的网络包"><a href="#3-第一次调用异常的网络包" class="headerlink" title="(3) 第一次调用异常的网络包 :"></a><strong>(3) 第一次调用异常的网络包 :</strong></h5><p><em>从异常的TCP抓包中可以看到， 没有TCP的3次握手过程， 直接是 Client 给 Server 发送数据包， 但是因为 Server 没有ACK响应， 所以Client 重试了 10次(Linux配置) ， 然后一直等待到超时。</em></p>
+<p><strong>因此大概率问题就是： Http因为使用了 keep-alive设置， clinet 和server 建立了长连接， 但是 server（nginx&#x2F;openrestry） 由于配置, 在 response 的 keep-alive Header中， 并没有返回 timeout的参数，而 server 又设置了在若干时间后(30mins)， 断开 TCP连接； 但此时 Client 由于keep-alive设置，并不知道 TCP已经断开， 所以在30mins后的第一次调用时， 不会做TCP 握手动作， 导致超时问题。</strong> </p>
+<p><img src="http://rgwngkfs9.hn-bkt.clouddn.com/70fd65b7-3c45-4aa4-a813-e1a53677b8c5.png" alt="img"></p>
+<p><img src="http://rgwngkfs9.hn-bkt.clouddn.com/78ae1f23-7c8a-45d1-be76-7512da2aebca.png" alt="img"></p>
+<h4 id="三-问题解决"><a href="#三-问题解决" class="headerlink" title="三. 问题解决"></a><strong>三. 问题解决</strong></h4><p>从上面的问题分析可以看到， 解决方式有 2种：<br> (1) Server 端在返回的 Keep-Alive Header种增加 timeout参数， 例如 HttpHeader -&gt; Connection ： keep-alive; timeout&#x3D;60000<br>(2) Client 自己为 Keep-Alive 设置一个 timeout 时间。</p>
+<p>由于 下游服务是 第三方服务， 很难推动修改， 因此我们采用 Client端设置 Keep-Alive timeout的方式修改。网关内部使用 Apache HttpClient4.5 作为调用下游服务的客户端，因此修改 Apache HttpClient中 Keep-Alive 参数的设置即可， 参考 ： <a target="_blank" rel="noopener" href="https://hc.apache.org/httpcomponents-client-4.5.x/current/tutorial/html/connmgmt.html#d5e425%E3%80%82">https://hc.apache.org/httpcomponents-client-4.5.x/current/tutorial/html/connmgmt.html#d5e425。</a></p>
+<p><img src="http://rgwngkfs9.hn-bkt.clouddn.com/ad1e6da1-c67a-408f-a0a6-a7c789bee370.png" alt="img"></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/09/05/SSO%E7%99%BB%E9%99%86/" rel="prev" title="单点登陆(Single Sign On)">
+                  <i class="fa fa-chevron-left"></i> 单点登陆(Single Sign On)
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/09/09/%E5%BA%8F/" rel="next" title="序">
+                  序 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">蜗小牛</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

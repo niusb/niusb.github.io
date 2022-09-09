@@ -1,93 +1,238 @@
-<!DOCTYPE HTML>
-<html>
+<!DOCTYPE html>
+<html lang="zh-CN">
 <head>
-  <meta charset="utf-8">
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha256-AbA177XfpSnFEvgpYu1jMygiLabzPCJCRIBtR5jGc0k=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.13.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="单点登陆(Single Sign On)单点登陆 : 在一个企业中, 系统由多个子系统构成, 访问每个子系统都需要单独登陆, 造成重复登陆多次, 操作复杂, 单点登陆即只需要登陆一次, 即可访问所有子系统.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="单点登陆(Single Sign On)">
+<meta property="og:url" content="http://example.com/2022/09/05/SSO%E7%99%BB%E9%99%86/index.html">
+<meta property="og:site_name" content="蜗小牛">
+<meta property="og:description" content="单点登陆(Single Sign On)单点登陆 : 在一个企业中, 系统由多个子系统构成, 访问每个子系统都需要单独登陆, 造成重复登陆多次, 操作复杂, 单点登陆即只需要登陆一次, 即可访问所有子系统.">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://pic.imgdb.cn/item/612dc53144eaada73909f493.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/612dc66f44eaada7390ce690.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/612dc6d444eaada7390dc72c.jpg">
+<meta property="og:image" content="http://172.18.193.45/trtd/oauth2/images/oauth2-code-user.png">
+<meta property="og:image" content="https://pic.imgdb.cn/item/612dc77744eaada7390f57a8.jpg">
+<meta property="og:image" content="https://pic.imgdb.cn/item/612dc79544eaada7390f9c60.jpg">
+<meta property="og:image" content="http://172.18.193.45/trtd/oauth2/images/oauth2-password-grant.png">
+<meta property="article:published_time" content="2022-09-05T06:50:43.000Z">
+<meta property="article:modified_time" content="2022-09-09T08:25:27.843Z">
+<meta property="article:author" content="蜗小牛">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://pic.imgdb.cn/item/612dc53144eaada73909f493.jpg">
+
+
+<link rel="canonical" href="http://example.com/2022/09/05/SSO%E7%99%BB%E9%99%86/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2022/09/05/SSO%E7%99%BB%E9%99%86/","path":"2022/09/05/SSO登陆/","title":"单点登陆(Single Sign On)"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>单点登陆(Single Sign On) | 蜗小牛</title>
   
-  <title>单点登陆(Single Sign On) | 蜗小牛 | Continue coding</title>
-
-  
-  <meta name="author" content="蜗小牛">
-  
-
-  
-  <meta name="description" content="单点登陆(Single Sign On)单点登陆 : 在一个企业中, 系统由多个子系统构成, 访问每个子系统都需要单独登陆, 造成重复登陆多次, 操作复杂, 单点登陆即只需要登陆一次, 即可访问所有子系统.
-
-在主流的登陆方案中, 都是使用 cookie/session 的解决方案, 即 浏览器端存">
-  
-
-  
-  
-  <meta name="keywords" content="">
-  
-
-  <meta id="viewport" name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
-
-  <meta property="og:title" content="单点登陆(Single Sign On)"/>
-
-  <meta property="og:site_name" content="蜗小牛"/>
-
-  
-  <meta property="og:image" content="/favicon.ico"/>
-  
-
-  <link href="/favicon.ico" rel="icon">
-  <link rel="alternate" href="/atom.xml" title="蜗小牛" type="application/atom+xml">
-  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
-<meta name="generator" content="Hexo 6.2.0"></head>
 
 
-<body>
-<div class="blog">
-  <div class="content">
 
-    <header>
-  <div class="site-branding">
-    <h1 class="site-title">
-      <a href="/">蜗小牛</a>
-    </h1>
-    <p class="site-description">Continue coding</p>
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="蜗小牛" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
   </div>
-  <nav class="site-navigation">
-    <ul>
-      
-        <li><a href="/">主页</a></li>
-      
-        <li><a href="/archives">归档</a></li>
-      
-        <li><a href="/about">关于</a></li>
-      
-    </ul>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">蜗小牛</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Continue coding</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%95%E7%82%B9%E7%99%BB%E9%99%86-Single-Sign-On"><span class="nav-number">1.</span> <span class="nav-text">单点登陆(Single Sign On)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.1.</span> <span class="nav-text"></span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B4%E4%BD%93%E6%B5%81%E7%A8%8B%E8%AF%B4%E6%98%8E"><span class="nav-number">1.2.</span> <span class="nav-text">整体流程说明</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AC%AC%E4%B8%80%E6%AC%A1%E7%99%BB%E9%99%86"><span class="nav-number">1.2.1.</span> <span class="nav-text">第一次登陆</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AC%AC%E4%BA%8C%E6%AC%A1%E7%99%BB%E9%99%86"><span class="nav-number">1.2.2.</span> <span class="nav-text">第二次登陆</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AF%B7%E6%B1%82%E5%93%8D%E5%BA%94%E7%A4%BA%E4%BE%8B"><span class="nav-number">1.2.3.</span> <span class="nav-text">请求响应示例</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Vue-%E5%89%8D%E7%AB%AF%E7%A4%BA%E4%BE%8B"><span class="nav-number">1.2.4.</span> <span class="nav-text">Vue 前端示例</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-%E7%AC%AC%E4%B8%80%E6%AC%A1%E7%99%BB%E9%99%86"><span class="nav-number">1.2.4.1.</span> <span class="nav-text">1.第一次登陆</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-%E7%AC%AC%E4%BA%8C%E6%AC%A1%E7%99%BB%E5%BD%95"><span class="nav-number">1.2.4.2.</span> <span class="nav-text">2.第二次登录</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-%E9%80%80%E5%87%BA"><span class="nav-number">1.2.4.3.</span> <span class="nav-text">3.退出</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8EKONG%E7%9A%84%E5%89%8D%E5%90%8E%E7%AB%AF%E5%88%86%E7%A6%BB%E6%B5%81%E7%A8%8B"><span class="nav-number">1.3.</span> <span class="nav-text">基于KONG的前后端分离流程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Session-%E4%BF%A1%E6%81%AF%E8%8E%B7%E5%8F%96"><span class="nav-number">1.4.</span> <span class="nav-text">Session 信息获取</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%90%8E%E7%AB%AF%E8%8E%B7%E5%8F%96Session"><span class="nav-number">1.4.1.</span> <span class="nav-text">后端获取Session</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%BF%E9%97%AE%E5%8F%97%E4%BF%9D%E6%8A%A4%E8%B5%84%E6%BA%90-access-token"><span class="nav-number">2.</span> <span class="nav-text">访问受保护资源(access_token)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#OAuth2%E5%AF%86%E7%A0%81%E6%A8%A1%E5%BC%8F"><span class="nav-number">2.1.</span> <span class="nav-text">OAuth2密码模式</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">蜗小牛</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">3</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
   </nav>
-</header>
-
-    <main class="site-main posts-loop">
-    <article>
-
-  
-    
-    <h3 class="article-title"><span>单点登陆(Single Sign On)</span></h3>
-    
-  
-
-  <div class="article-top-meta">
-    <span class="posted-on">
-      <a href="/2022/09/05/SSO登陆/" rel="bookmark">
-        <time class="entry-date published" datetime="2022-09-05T06:50:43.000Z">
-          2022-09-05
-        </time>
-      </a>
-    </span>
+</div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
   </div>
 
 
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
   
 
-  <div class="article-content">
-    <div class="entry">
-      
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/09/05/SSO%E7%99%BB%E9%99%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="蜗小牛">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="蜗小牛">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="单点登陆(Single Sign On) | 蜗小牛">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          单点登陆(Single Sign On)
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-09-05 14:50:43" itemprop="dateCreated datePublished" datetime="2022-09-05T14:50:43+08:00">2022-09-05</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-09-09 16:25:27" itemprop="dateModified" datetime="2022-09-09T16:25:27+08:00">2022-09-09</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
         <h2 id="单点登陆-Single-Sign-On"><a href="#单点登陆-Single-Sign-On" class="headerlink" title="单点登陆(Single Sign On)"></a>单点登陆(Single Sign On)</h2><p><strong>单点登陆</strong> : 在一个企业中, 系统由多个子系统构成, 访问每个子系统都需要单独登陆, 造成重复登陆多次, 操作复杂, 单点登陆即只需要登陆一次, 即可访问所有子系统.</p>
+<span id="more"></span>
 <p><img src="https://pic.imgdb.cn/item/612dc53144eaada73909f493.jpg" alt="Cookie&amp;Session"></p>
 <p>在主流的登陆方案中, 都是使用 <code>cookie/session</code> 的解决方案, 即 浏览器端存储 <code>cookie</code> 信息, 服务端存储 <code>session</code> 信息, 浏览器的每次操作, 都会携带 <code>cookie</code> 到服务端, 服务端校验该 <code>cookie </code>是否已存在对应的 <code>session</code> 信息, 如果存在, 就允许浏览器进行操作, 不存在, 说明用户未登陆, 提示用户登陆. 登陆后, 创建cookie&#x2F;session关联关系, 后续即可访问即可正常进行.</p>
 <p>在多系统集成的场景下, 不同的系统部署在不同的domain域中(即 ip&#x2F;port 不同), 由于浏览器的 <code>**同源策略**</code> 和 <code>**cookie作用域**</code> 的限制, 登陆系统A后, 会生成系统A的cookie, 这个cookie 的domain域限定为A (即只有在操作系统A时, 浏览器才会发送该cookie); 而如果操作系统B, 并不会发送系统A的cookie, 此时就需要再次登陆系统B, 才能生成系统B的 cookie&#x2F;session 关系.</p>
@@ -303,23 +448,58 @@
 <li>Response Body:<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    &quot;access_token&quot;: &quot;4114f01b-a43a-44cc-903b-1b31550b25bf&quot;,</span><br><span class="line">    &quot;token_type&quot;: &quot;bearer&quot;,</span><br><span class="line">    &quot;refresh_token&quot;: &quot;5a4d7d4e-de41-4f97-9785-52e42a10c6c9&quot;,</span><br><span class="line">    &quot;expires_in&quot;: 43199,</span><br><span class="line">    &quot;scope&quot;: &quot;user&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
 </ul>
 
-      
-    </div>
-
-  </div>
-
-  <div class="article-footer">
-    <div class="article-meta pull-left">
-
-    
-
-    
-
     </div>
 
     
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/09/09/Http%E8%B0%83%E7%94%A8%E5%91%A8%E6%9C%9F%E6%80%A7%E6%97%A0%E5%93%8D%E5%BA%94%E9%97%AE%E9%A2%98%E7%9A%84%E5%88%86%E6%9E%90%E4%B8%8E%E8%A7%A3%E5%86%B3/" rel="next" title="Http调用周期性无响应问题的分析与解决">
+                  Http调用周期性无响应问题的分析与解决 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">蜗小牛</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
   </div>
-</article>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
 
   
 
@@ -327,23 +507,11 @@
 
 
 
+  
 
 
 
 
-    </main>
 
-    <footer class="site-footer">
-  <p class="site-info">
-    </br>
-    
-    &copy; 2022 蜗小牛
-    
-  </p>
-</footer>
-    
-    
-  </div>
-</div>
 </body>
 </html>
